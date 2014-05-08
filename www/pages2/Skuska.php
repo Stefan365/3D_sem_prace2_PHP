@@ -1,5 +1,8 @@
 <?php
 
+include './../pages2/pak/DBconn.php';
+include './../pages2/pak/Pom.php';
+
 /* 
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -64,6 +67,7 @@ $pole = Skuska::getQuestHeaders("T_USER");
                 echo "<td><b>". $item . "</b></td>";
             }
 */
+/*
 $pole = array("A","B","C");
 $pole1 = array("A","B","C");
 $pole2 = array("A","B","C");
@@ -75,11 +79,18 @@ array_push($all, $pole);
 array_push($all, $pole1);
 array_push($all, $pole2);
 array_push($all, $pole3);
+*/
+
+//echo $all[0][1];
+
+$ple = Skuska::getAllUsersId();
+
+            foreach ($ple as &$item) {
+                echo "<td><b>". $item . "</b></td>";
+            }
 
 
-echo $all[0][1];
-
-/* * class Skuska{
+class Skuska{
  
     
     static $DBHOST = "localhost";
@@ -100,7 +111,6 @@ echo $all[0][1];
 
     }
     
-    static $DATABASE = "php_project1";
     
     public static function getIdFromComboName($cn) {
 
@@ -234,4 +244,22 @@ echo $all[0][1];
    //     mysql_close();
    //     return $listHead;
    // }
-//}
+
+public static function getAllUsersId() {
+        
+        DBconn::connect();
+        
+        $listIds = array();
+        $query = "SELECT id from T_USER";
+        
+        //$result = mysql_db_query(DBconn::$DATABASE, $query, DBconn::$connection);
+        $result = mysql_query($query);
+            
+        while (list($id)  = mysql_fetch_array($result)) {
+            array_push($listIds, $id);
+        }
+            
+        mysql_close();
+        return $listIds;
+    } 
+}

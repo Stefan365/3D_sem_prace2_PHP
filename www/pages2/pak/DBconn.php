@@ -1,5 +1,7 @@
 <?php
 
+include './../pages2/pak/CryptMD5.php';
+//include './../pages2/pak/Pom.php';
 
 /**
  *
@@ -34,7 +36,7 @@ class DBconn {
      * @throws java.sql.SQLException
      */
     private static function createTableUser() {
-        
+        DBconn::connect();
         $sql = "CREATE TABLE T_USER"
             ." (id INTEGER not NULL AUTO_INCREMENT, first_name VARCHAR(30),"
             ." last_name VARCHAR(30),  login VARCHAR(30) NOT NULL, password VARCHAR(50) NOT NULL,"
@@ -55,6 +57,7 @@ class DBconn {
      * @throws java.sql.SQLException
      */
     private static function createTableQ1() {
+        DBconn::connect();
         
         $sql = "CREATE TABLE T_Q1"
             ." (id INTEGER NOT NULL AUTO_INCREMENT, gender VARCHAR(5) NOT NULL, "
@@ -79,6 +82,8 @@ class DBconn {
      * @throws java.sql.SQLException
      */
     private static function createTableQ2() {
+        DBconn::connect();
+        
         $sql = "CREATE TABLE T_Q2"
             ." (id INTEGER NOT NULL AUTO_INCREMENT, gender VARCHAR(5) NOT NULL,"
             ." age_group VARCHAR(30) NOT NULL,  education VARCHAR(30) NOT NULL,"
@@ -105,6 +110,7 @@ class DBconn {
      * @throws java.sql.SQLException
      */
     private static function createTableQueries() {
+        DBconn::connect();
         
         $sql = "CREATE TABLE T_QUERY"
             ." (id INTEGER NOT NULL AUTO_INCREMENT, q_tableName VARCHAR(20) NOT NULL, "
@@ -130,7 +136,8 @@ class DBconn {
      * @throws java.sql.SQLException
      */
     public static function insertValuesUser($fn, $ln, $lg, $pw, $rol) {
-
+        DBconn::connect();
+        
         //$sql = "INSERT INTO T_USER (first_name, last_name, login, password, role) "
         //        . "VALUES ('".$fn."','".$ln."','".$lg."','".$pw."','".$rol;
         $sql = "INSERT INTO T_USER (first_name, last_name, login, password, role) "
@@ -152,7 +159,9 @@ class DBconn {
      * @throws java.sql.SQLException
      */
     public static function updateValuesUserA($uid, $fn, $ln, $pw) {
-
+        
+        DBconn::connect();
+        
         $sql = "UPDATE T_USER SET first_name = '$fn', "
             ."last_name= '$ln', "
             ."password= '$pw'"
@@ -175,7 +184,9 @@ class DBconn {
      * @throws java.sql.SQLException
      */
     public static function updateValuesUser($uid, $fn, $ln, $pw, $role) {
-
+        
+        DBconn::connect();
+        
         $sql = "UPDATE T_USER SET first_name = '$fn', "
             ."last_name= '$ln', "
             ."password= '$pw', "
@@ -210,7 +221,10 @@ class DBconn {
     public static function insertValuesQ($qTable, $gen, $ag, $ed, $ig, 
             $q1, $q2, $q3, $q4, $q5, $q6, $q7, $uid)  {
 
+        DBconn::connect();
+        
         $part1 = "INSERT INTO ".$qTable;
+        
         
         switch ($qTable) {
             case "T_Q1":
@@ -226,7 +240,7 @@ class DBconn {
                 return;
         }
         
-        $sql = $part1 + $part2 + $part3;
+        $sql = $part1 . $part2 . $part3;
         
         //mysql_select_db(DBconn::$DATABASE);
         mysql_query($sql);
@@ -243,6 +257,8 @@ class DBconn {
      * @throws java.sql.SQLException
      */
     public static function insertValuesT_QUERY($tn) {
+        DBconn::connect();
+        
         $sql = "INSERT INTO T_QUERY (q_tableName) "
             ." VALUES ('$tn')";
         
@@ -264,6 +280,8 @@ class DBconn {
      */
     private static function dropTable($tn) {
         
+        DBconn::connect();
+        
         $sql = "DROP TABLE ".$tn;
         //mysql_select_db(DBconn::$DATABASE);
         mysql_query($sql);
@@ -282,16 +300,18 @@ class DBconn {
      * @return 
      * @throws java.sql.SQLException
      */
-    public static function getUserId($login) {
+    public static function getUserId($lg) {
 
-        $sql = "SELECT id FROM T_USER WHERE login LIKE '$login'";
-        //mysql_select_db(DBconn::$DATABASE);
-        $vysledok = mysql_query($sql);
+        DBconn::connect();
         
-        while(list($id)= mysql_fetch_array($vysledok)) {
-        }
+        $sql = "SELECT id FROM T_USER WHERE login LIKE '$lg'";
+        //mysql_select_db(DBconn::$DATABASE);
+        $result = mysql_query($sql);
+        
+        $id= mysql_fetch_array($result);
+        
         mysql_close();
-        return $id;
+        return $id[0];
     }
 
     //4.1  
@@ -304,12 +324,13 @@ class DBconn {
      */
     public static function getUserFn($uid) {
         
+        DBconn::connect();
+        
         $sql = "SELECT first_name FROM T_USER WHERE id = $uid";
         $vysledok = mysql_query($sql);
         
         //$first_name = mysql_fetch_array($vysledok);
-        while(list($first_name)= mysql_fetch_array($vysledok)) {
-        }
+        list($first_name)= mysql_fetch_array($vysledok);
         mysql_close();
         return $first_name;
         
@@ -325,14 +346,14 @@ class DBconn {
      */
     public static function getUserLn($uid) {
         
+        DBconn::connect();
+        
         $sql = "SELECT last_name FROM T_USER WHERE id = $uid";
 
         $vysledok = mysql_query($sql);
 
-        //$first_name = mysql_fetch_array($vysledok);
+        list($last_name)= mysql_fetch_array($vysledok);
         
-        while(list($last_name)= mysql_fetch_array($vysledok)) {
-        }
         mysql_close();
         return $last_name;
         
@@ -348,14 +369,15 @@ class DBconn {
      */
     public static function getUserLg($uid) {
         
+        DBconn::connect();
+        
         $sql = "SELECT login FROM T_USER WHERE id = $uid";
 
         $vysledok = mysql_query($sql);
 
         //$login = mysql_fetch_array($vysledok);
         
-        while(list($login)= mysql_fetch_array($vysledok)) {
-        }
+        list($login)= mysql_fetch_array($vysledok);        
         
         mysql_close();
         return $login;
@@ -370,15 +392,14 @@ class DBconn {
      * @throws java.sql.SQLException
      */
     public static function getUserPw($uid) {
+        DBconn::connect();
         
         $sql = "SELECT password FROM T_USER WHERE id = $uid";
         $vysledok = mysql_query($sql);
 
         //$password = mysql_fetch_array($vysledok);
         
-        while(list($password)= mysql_fetch_array($vysledok)) {
-        
-        }
+        list($password)= mysql_fetch_array($vysledok);       
         
         mysql_close();  
         return $password;
@@ -393,6 +414,7 @@ class DBconn {
      * @throws java.sql.SQLException
      */
     public static function getUserRole($uid) {
+        DBconn::connect();
         
         $sql = "SELECT role FROM T_USER WHERE id = $uid";
 
@@ -400,8 +422,8 @@ class DBconn {
 
         //$role = mysql_fetch_array($vysledok);
         
-        while(list($role)= mysql_fetch_array($vysledok)) {
-        }
+        list($role)= mysql_fetch_array($vysledok);
+        
         
         mysql_close();
         return $role;
@@ -414,12 +436,17 @@ class DBconn {
      * @return ano/ne pro existenci T_USER v databazi.
      */
     public static function existsT_USER() {
+        DBconn::connect();
+        //echo "<h1>Caught exception: 0</h1>";
         
         try {
             $sql = "SELECT * FROM T_USER";
             mysql_query($sql);
             mysql_close();
+            //echo "<h1>Caught exception: </h1>";
+        
             return true;
+            
         } catch (SQLException $ex) {
             echo "Caught exception: ", $ex->getMessage(), "\n";
             mysql_close();

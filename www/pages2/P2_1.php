@@ -1,13 +1,15 @@
 <?php 
 
+include './../pages2/pak/DBconn.php';
+include './../pages2/pak/Pom.php';
+
 /**
  * Spracovava udaje z registracie
  *
  * @author Stefan Veres
  */
 
-include 'getForm.php';
-use Nette\Diagnostics\Debugger;
+session_start();
 
 ?>
 <html>
@@ -20,7 +22,7 @@ use Nette\Diagnostics\Debugger;
     <body>
 
         <h3>Spracovanie registracie</h3>
-        <?php DBconn::zapisDbUser(); 
+        <?php Pom::zapisDbUser(); 
           $fn = filter_input(INPUT_POST, 'first_name'); ?>
         
         <h3> <?php echo $fn; ?></h3>

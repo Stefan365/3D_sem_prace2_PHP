@@ -1,5 +1,9 @@
 <?php
 
+include './../pages2/pak/DBconn.php';
+include './../pages2/pak/Pom.php';
+
+session_start();
 
 /**
  * Admin page

@@ -1,5 +1,9 @@
 <?php 
 
+include './../pages2/pak/DBconn.php';
+include './../pages2/pak/Pom.php';
+
+session_start();
 
 /**
  *
@@ -62,7 +66,7 @@
 
     <body>
 
-        <h5><?php echo $lg; ?></h5>
+        <h3><?php echo $lg; ?></h3>
         <?php echo $htmlButtons; ?>
         
         <!-- logout button:-->
@@ -73,7 +77,7 @@
         </div>
         
         <!-- change user data button: -->
-        <div id=paticka>
+        <div id=patickaR>
             <form action="P5.php" method="post">
                 <input type="submit" value="USER DATA"/>
             </form>

@@ -1,5 +1,10 @@
 <?php
 
+include './../pages2/pak/DBconn.php';
+include './../pages2/pak/Pom.php';
+
+session_start();
+
 /**
  * Adminovske prostredie na upravu dat usera. (neskvor zvazit zlucenie s P5)
  *

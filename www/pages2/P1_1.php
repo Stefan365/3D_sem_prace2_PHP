@@ -4,21 +4,8 @@
     Created on : 20-Apr-2014
     Author     : Stefan Veres
 */
-//use C:\Users\User\Dropbox\IIVOS_STV\Netbeans\TODOLIST\sem_praca_3d\www\pages2\pak\DBconn.php;
-//import('pak.DBconn.php');
-//use pak\DBconn.php;
-
-//require_once 'pak/DBconn.php';
-//require_once 'C:/Users/User/Dropbox/IIVOS_STV/Netbeans/TODOLIST/sem_praca_3d/www/pages2/pak/DBconn.php';
-require __DIR__ . '/../www/pages2/pak/DBconn.php';
-
-//loadClass(DBconn);
-//require_once 'Nette/loader.php';
-//require_once 'pak';
-
-//Debug::$strictMode = TRUE;
-//Debug::enable(Debug::DETECT, dirname(__FILE__).'/var/log/errors.txt');
-
+include './../pages2/pak/DBconn.php';
+include './../pages2/pak/Pom.php';
 
 ?>
 
@@ -33,9 +20,8 @@ require __DIR__ . '/../www/pages2/pak/DBconn.php';
 
         <?php
             $message = "";
-            $con = new DBconn();
             $bol = DBconn::initDB();
-                echo "BOL: *".$bol."*";
+                //echo "BOL: *".$bol."*";
                 
             try {
                 if($bol == true){
@@ -46,7 +32,8 @@ require __DIR__ . '/../www/pages2/pak/DBconn.php';
 
             } catch (SQLException $e) {
                 echo "Caught exception: ", $e->getMessage(), "\n";
-                $sprava = "SOMETHING WENT WRONG WITH DB!";
+                $message= "SOMETHING WENT WRONG WITH DB!";
+                //$_SESSION['message'] = "SOMETHING WENT WRONG WITH DB!";
             }
 
         ?>
@@ -56,9 +43,10 @@ require __DIR__ . '/../www/pages2/pak/DBconn.php';
                 <input type="submit" value="BACK" />
             </form>
         </div>
+        
         <!-- TEXT O USPECHU:-->
         <h5 id="podmenu1">
-            <?php echo $sprava; ?>
+            <?php echo $message; ?>
         </h5>
 
     </body>

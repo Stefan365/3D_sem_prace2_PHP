@@ -1,13 +1,16 @@
 <?php
+
+include './../pages2/pak/DBconn.php';
+include './../pages2/pak/Pom.php';
+
 /*
    Document   : php projekt
    Created on : 20.04.2014
    Author     : Stefan Veres
 */
 
-//import('pak.*');
-//
 //Prihlasovanie sa do systemu:
+session_start();
 
 $message = $_SESSION['message'];
 $_SESSION['message'] = "";
@@ -18,12 +21,12 @@ $_SESSION['message'] = "";
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" type="text/css" href="newcss.css">
-        <title>SEMPRE PHP</title>
+        <title>SEM PROJ</title>
     </head>
 
     <body>
 
-        <h5>User Login</h5>
+        <h3>User Login</h3>
 
         <form action="P3_1.php" method="post">
             LOGIN: <input type="text" name="login" /> <br/>

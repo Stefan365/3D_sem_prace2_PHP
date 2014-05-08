@@ -1,26 +1,32 @@
 <?php
-//import('pak.*');
+
 
 /**
  * Vstupna stranka aplikacie.
  *
  * @author Stefan Veres
  */
+
+include './../pages2/pak/DBconn.php';
+include './../pages2/pak/Pom.php';
+ 
+session_start();
 Pom::nastavMessage("message");
+Pom::cleanSesQuest();
 
 $message = $_SESSION['message'];
 $_SESSION['message'] = "";
 
-Pom::cleanSesQuest();
+DBconn::initDbSettings();
+
 $initDb = "";
 
         //inicializacia DB
-        if(!Pom::existsT_USER()){
+        if(!DBconn::existsT_USER()){
+            //echo "<h1>KAROLKO</h1>";
             $initDb = Pom::initDbText();
-        }
+        } 
 
-
-        
 ?>   
 <html>
     <head>

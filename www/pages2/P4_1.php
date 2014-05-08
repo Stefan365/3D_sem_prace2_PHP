@@ -1,6 +1,9 @@
 <?php 
 
+include './../pages2/pak/DBconn.php';
+include './../pages2/pak/Pom.php';
 
+session_start();
 
 /**
  * Spracuje dotaz ze stranek dotaznikov.
@@ -29,7 +32,7 @@
             $_SESSION['message'] = "TRY IT AGAIN PLEASE, SOME SQL ERROR!";
             //Posli spat: 
             header("Location: P4.php");
-            die();  
+            die();
         }
 ?>
 <html>

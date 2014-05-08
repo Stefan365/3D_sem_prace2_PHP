@@ -1,6 +1,9 @@
 <?php 
 
+include './../pages2/pak/DBconn.php';
+include './../pages2/pak/Pom.php';
 
+session_start();
 
 /**
  * Vstupna invisible stranka. Kontrola prihlasovacich udajov.Nastavenie vstupov 
@@ -12,12 +15,14 @@
             $lg = filter_input(INPUT_POST, 'login');
             $pw = filter_input(INPUT_POST, 'password');
             
+            
             //sifrovanie hesla:
-            //$pwc = CryptMD5::crypt($pw);
+            $pwc = CryptMD5::crypt($pw);
 
             //A. Kontrola jestli je uzivatel prihlaseny (keby chcel obist prihlasovaciu stranku)
-            if (!Pom::checkPassword($lg, $pw)){
-                $message = "PLEASE LOGIN OR REGISTER!";
+            if (!Pom::checkPassword($lg, $pwc)){
+                echo "<h1>JOJO</h1>";
+                $_SESSION['message'] = "PLEASE LOGIN OR REGISTER!";
                 header("Location: P1.php");
                 die();
             }
@@ -26,7 +31,7 @@
             Pom::cleanSesQuest();//vynuluje eventualne stare hodnoty 
             Pom::zapisSesUser();//zapise do session nove hodnoty
             
-            //Vsechno je v poradku, chod na oficialnuvstupnu stranku:
+            //Vsechno je v poradku, chod rovno na oficialnu vstupnu stranku:
             header("Location: P4.php");
             die();
 

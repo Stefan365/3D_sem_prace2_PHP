@@ -1,11 +1,15 @@
 <?php
+
+include './../pages2/pak/DBconn.php';
+include './../pages2/pak/Pom.php';
+
 /*
    Document   : Sem projekt 
    Created on : 20.04.2014
    Author     : Stefan Veres
 */
 
-//import('pak.*');
+session_start();
 $message = $_SESSION['message'];
 $_SESSION['message'] = "";
     

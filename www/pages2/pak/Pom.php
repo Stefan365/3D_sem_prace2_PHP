@@ -1,5 +1,10 @@
 <?php 
+
+//include './../pages2/pak/DBconn.php';
+//include './../pages2/pak/CryptMD5.php';
+
 /**
+ * 
  *
  * @author Stefan
  */
@@ -22,10 +27,10 @@ class Pom {
         $pw = filter_input(INPUT_POST, 'password');
 
         //sifrovanie hesla:
-        //$pwc = CryptMD5::crypt($pw);
+        $pwc = CryptMD5::crypt($pw);
 
         //zapis hodnoty do DB:
-        DBconn::insertValuesUser($fn, $ln, $lg, $pw, "U");
+        DBconn::insertValuesUser($fn, $ln, $lg, $pwc, "U");
 
     }
 
@@ -75,12 +80,20 @@ class Pom {
         
         $lg = filter_input(INPUT_POST, 'login');
         $pw = filter_input(INPUT_POST, 'password');
+        
+        //echo "<h1> LG:*".$lg."*</h1>";
+        
         //sifrovanie hesla:
         $pwc = CryptMD5::crypt($pw);
 
         $uid = DBconn::getUserId($lg);
         $fn = DBconn::getUserFn($uid);
         $ln = DBconn::getUserLn($uid);
+        
+        //echo "<h1> UID:*".$uid."*</h1>";
+        //echo "<h1> FN:*".$fn."*</h1>";
+        //echo "<h1> LN:*".$ln."*</h1>";
+        
         //$rol = DBconn::getUserRole($uid);
 
         $_SESSION['uid'] = $uid;
@@ -132,7 +145,6 @@ class Pom {
         $_SESSION['last_name'] = "";
         $_SESSION['password'] = "";
         $_SESSION['questionaire'] = "";
-        $_SESSION['q_table'] = "";
         $_SESSION['sel_user'] = "";         
     }
 
@@ -145,11 +157,15 @@ class Pom {
      */
     public static function nastavMessage($attr) {
 
-        $mess =  $_SESSION[$attr];
-        if ($mess == null) {
-            //Este nebolo definovane:
-             $_SESSION[$attr] = "";
-        }
+        $_SESSION[$attr] = "";
+        try {
+            $s = $_SESSION[$attr];
+            
+        } catch (Exception $e) {
+            //echo "Caught exception: ", $e->getMessage(), "\n";
+            $_SESSION[$attr] = "";
+        } 
+        
     }
 
     //4.
@@ -167,10 +183,20 @@ class Pom {
         $q1 = filter_input(INPUT_POST, 'q1');
         $q2 = filter_input(INPUT_POST, 'q2');
         $q3 = filter_input(INPUT_POST, 'q3');
+        /*
+        echo "<h1> UID:*".$uid."*</h1>";
+        echo "<h1> UID:*".$gen."*</h1>";
+        echo "<h1> UID:*".$ag."*</h1>";
+        echo "<h1> UID:*".$ed."*</h1>";
+        echo "<h1> UID:*".$ig."*</h1>";
+        echo "<h1> UID:*".$q1."*</h1>";
+        echo "<h1> UID:*".$q2."*</h1>";
+        echo "<h1> UID:*".$q3."*</h1>";
+        */ 
         
         $q_tab = filter_input(INPUT_POST, 'questionaire');
 
-        switch(q_tab){
+        switch($q_tab){
             case "T_Q1":
                 $q4 = "";
                 $q5 = "";
@@ -204,7 +230,8 @@ class Pom {
 
         //array   <List<String>> listAll = new ArrayList<>();
         //List<String> listYes = new ArrayList<>(), listNo = new ArrayList<>();
-
+        DBconn::connect();
+        
         $query1 = "SELECT q_tableName from T_QUERY";
 
         $preQuery = "SELECT user_id from ";
@@ -222,22 +249,22 @@ class Pom {
             
             $result1 = mysql_query($query1);
             
-            while (list($q_tableName) = mysql_fetch_array($result1)) {
-                $tn = $q_tableName;
+            list($q_tableName) = mysql_fetch_array($result1);
+            $tn = $q_tableName;
             
                 //prohledavani dotaznikovych tabulek: 
                 $query2 = $preQuery.$tn.$postQuery;
 
                 $result2 = mysql_query($query2);
-                while (list($user_id) = mysql_fetch_array($result2)) {
-                    $userId = $user_id;
-                }
-                if (($userId != null) && !$userId != "") {
+                list($user_id) = mysql_fetch_array($result2);
+                
+                
+                if (($user_id != null) && !$user_id != "") {
                     array_push($listYes, $tn);
-                    $userId = "";
+                    $user_id = "";
                 } else {
                     array_push($listNo, $tn);
-                    listNo.add(tn);
+                    $user_id = "";
                 }
             }
             array_push($listAll, $listYes);
@@ -358,16 +385,18 @@ class Pom {
         // ze sa skontroluje (zo session), jestli i prihlasene meno a heslo 
         // patria tomu istemu uid
         //
+        DBconn::connect();
+        
         $query = "SELECT role from T_USER where id =" . $uid;
 
         try {
             //$result = mysql_db_query(DBconn::$DATABASE, $query, DBconn::$connection);
             $result = mysql_query($query);
-            while (list($role) = mysql_fetch_array($result)) {
-                $rol = $role;
-            }
+            $role = mysql_fetch_row($result);
+            
+            //while (list($role) = mysql_fetch_array($result)) {
             mysql_close();
-            return ($rol == "A");
+            return ($role == "A");
             
         } catch (SQLException $e) {
             echo "Caught exception: ", $e->getMessage(), "\n";
@@ -386,17 +415,18 @@ class Pom {
      *
      */
     public static function checkPassword($lg, $pw) {
-
+        
+        DBconn::connect();
+        
         $query = "SELECT password from T_USER WHERE login LIKE '" . $lg . "'";
-        $realPw = "";
         //pw netreba sifrovat, lebo prichadza uz zasifrovane.
         
         try {
 
             $result = mysql_query($query);
-            while (list($password) = mysql_fetch_array($result)) {
-                $realPw = $password;
-            }
+            list($password) = mysql_fetch_array($result);
+            $realPw = $password;
+            
             mysql_close();
             return ($realPw == null ? false : ($realPw == $pw));
 
@@ -417,7 +447,9 @@ class Pom {
      *
      */
     private static function getComboNames() {
-
+        
+        DBconn::connect();
+        
         $comboNames = array();
         $query = "SELECT id, first_name, last_name from T_USER where role NOT LIKE 'A'";
         
@@ -511,6 +543,8 @@ class Pom {
      */
     public static function deleteDbId($uid) {
         
+        DBconn::connect();
+        
         $queryTables = Pom::getQueryTableNames();
         $queries = array();
         
@@ -553,7 +587,9 @@ class Pom {
      * @throws java.sql.SQLException
      */
     private static function getQueryTableNames() {
-
+        
+        DBconn::connect();
+        
         $queryTables = array();
         $query = "SELECT q_tableName FROM T_QUERY";
         
@@ -640,6 +676,7 @@ class Pom {
      * @return ano/ne pro existenci T_USER v databazi.
      */
     public static function existsT_USER() {
+        DBconn::connect();
         
         try {
             $sql = "SELECT * FROM T_USER";
@@ -664,6 +701,9 @@ class Pom {
      *
      */
     public static function getAllUsersId() {
+        
+        DBconn::connect();
+        
         $listIds = array();
         $query = "SELECT id from T_USER";
         
@@ -687,6 +727,7 @@ class Pom {
      */
     public static function getQuestHeaders($tn) {
         $listHead = array();
+        DBconn::connect();
         
         $sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '" 
                 . $tn . "' AND TABLE_SCHEMA = '" . DBconn::$DATABASE."'";
