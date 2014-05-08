@@ -1,0 +1,14 @@
+##
+# TODOLIST
+# Školní projekt k seznámení s Nette a ORM
+# 
+# @author MMR <miroslav.mrazek@gmail.com>
+#
+# Tento soubor slouží jako šablona pro vytvoření souboru 'config.local.neon'
+
+parameters:
+	database:
+		host: "localhost"
+		username: "root"
+		password: ""
+		database: "todolist"

@@ -1,0 +1,13 @@
+##
+# TODOLIST
+# Školní projekt k seznámení s Nette a ORM
+# 
+# @author MMR <miroslav.mrazek@gmail.com>
+#
+
+factories:
+	- Todolist\Components\ILoginFormFactory
+	- Todolist\Components\ILogoutControlFactory
+	- Todolist\Components\ICatalogFormFactory
+	- Todolist\Components\ICatalogControlFactory
+	- Todolist\Components\ITaskFormFactory

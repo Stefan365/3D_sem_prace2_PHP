@@ -1,0 +1,33 @@
+##
+# TODOLIST
+# Školní projekt k seznámení s Nette a ORM
+# 
+# @author MMR <miroslav.mrazek@gmail.com>
+#
+
+parameters:
+	database:
+		profiler: on
+
+php:
+	date.timezone: Europe/Prague
+
+nette:
+	container:
+		debugger: on
+
+	application:
+		errorPresenter: Error
+		mapping:
+			*: Todolist\*Module\*Presenter
+
+	session:
+		expiration: 14 days
+
+services:
+	- Todolist\RouterFactory
+	router: @Todolist\RouterFactory::createRouter
+
+includes:
+	- model.neon
+	- components.neon
