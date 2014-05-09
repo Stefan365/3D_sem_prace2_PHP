@@ -18,6 +18,8 @@ class DBconn {
     static function connect(){
         DBconn::$connection = mysql_connect(DBconn::$DBHOST, DBconn::$USER, DBconn::$PASSWORD);
         mysql_select_db(DBconn::$DATABASE);
+        mysql_set_charset('utf8');
+    
     }
     
     static function initDbSettings(){
