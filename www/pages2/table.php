@@ -1,4 +1,10 @@
 <?php
+
+include './../pages2/pak/DBconn.php';
+include './../pages2/pak/Pom.php';
+
+session_start();
+
 /*
     Document   : uzivatelia
     Created on : 08-Mar-2014, 11:27:55
@@ -6,12 +12,21 @@
 */
 
 $lg = $_SESSION['login'];
-$pw = $_SESSION['password'];
+$pwc = $_SESSION['password'];
 $uid = $_SESSION['uid'];
-$sprava = "";
-//$ques = $_SESSION['questionaire'];
-$ques = filter_input(INPUT_POST, 'questionaire');
 
+        //A. Kontrola jestli je uzivatel prihlaseny (keby chcel obist prihlasovaciu stranku)
+        if (!Pom::checkPassword($lg, $pwc)){
+            $_SESSION['message'] = "PLEASE LOGIN OR REGISTER!";
+            header("Location: P1.php");
+            die();
+        }
+
+
+
+
+$tn =  $_SESSION['questionaire'];
+        
 
 ?>
 
@@ -28,19 +43,18 @@ $ques = filter_input(INPUT_POST, 'questionaire');
 
 
         <?php
-            $message = "";
-            //$pag =  filter_input(INPUT_POST, 'page');
-            if ( $pag == "P1") {
-            //ochrana pred F5. (opakovane zapisovanie uz raz zadanych udajov)
-            }
+        
             //Konstrukcia tabulky:
             try{
-                $questions = Pom::getHeader($ques);
+                $questions = Pom::getQuestions($tn);
                 
                 DBconn::connect();
-                $query = "SELECT * FROM " . $ques ." WHERE user_id = '" . $uid . "'";
+                
+                $query = "SELECT * FROM $tn WHERE user_id = '$uid'";
                 $result = mysql_query($query);
+                
                 $answers = mysql_fetch_row($result);
+                    
                 
                 $all = array();
                 array_push($all, $questions);
@@ -54,21 +68,29 @@ $ques = filter_input(INPUT_POST, 'questionaire');
                     echo "<td><b>". $item . "</b></td>";
                 }
                 //telo tabulky:
-                for ($i = 0; $i < $sizeof($questions); $i++){
+                for ($i = 0; $i < sizeof($questions); $i++){
                    echo "<tr>";
-                   echo "<td>". $all[0][i] . "</td>". "<td>". $all[1][i] . "</td>";
+                   echo "<td>". $all[0][$i] . "</td>". "<td>". $all[1][$i + 1] . "</td>";
                    echo "</tr>";
                 }
                 echo "</table>";
                 mysql_close();
+                $message = "";
 
             } catch (SQLException $e) {
                 echo "Caught exception: ", $ex->getMessage(), "\n";
                 mysql_close();
-                $sprava = "SOMETHING WENT WRONG WITH DB!";
+                $message = "SOMETHING WENT WRONG WITH DB!";
             }
                 
 ?>
-        <h4 id=podpaticka> <font color = "red"> <?php echo $sprava; ?> </font></h4>
+        <h4 id=podpaticka> <font color = "red"> <?php echo $message; ?> </font></h4>
+        
+        <div id=paticka>
+            <form action="P4.php" method="post">
+                <input type="submit" value="BACK" />
+            </form>
+        </div>
+        
     </body>
 </html>

@@ -2,6 +2,7 @@
 
 include './../pages2/pak/DBconn.php';
 include './../pages2/pak/Pom.php';
+//include './../pages2/pak/CryptMD5.php';
 
 /* 
  * To change this license header, choose License Headers in Project Properties.
@@ -82,184 +83,54 @@ array_push($all, $pole3);
 */
 
 //echo $all[0][1];
-
+/*
 $ple = Skuska::getAllUsersId();
 
             foreach ($ple as &$item) {
-                echo "<td><b>". $item . "</b></td>";
+                echo "<td><b>*". $item . "*</b></td>";
             }
-
-
-class Skuska{
- 
-    
-    static $DBHOST = "localhost";
-    static $USER = "root";
-    static $PASSWORD = "";
-    static $DATABASE = "php_project1";
-    static $connection;
-    
-    static function connect(){
-        
-        Skuska::$connection = mysql_connect(Skuska::$DBHOST, Skuska::$USER, Skuska::$PASSWORD);
-        mysql_select_db(Skuska::$DATABASE);
-        mysql_set_charset('utf8');
-        //nastavenie kodovania DB na utf-8:
-        $sql = "SET NAMES 'utf8'";
-        mysql_query($sql);
-        //mysql_close();
-
-    }
-    
-    
-    public static function getIdFromComboName($cn) {
-
-        $zoz = explode(",", $cn );
-        $uid = $zoz[0];
-        return $uid;
-    }
-
-    public static function createYesButtons(array $li) {
-
-        $listYes = array();
-        
-        foreach ($li as &$value) {
-            $tn = $value;
-            $page = substr($tn, -2, 2);
-       
-            $strBut = "";
-            $strBut = $strBut."<div>\n";
-            $strBut = $strBut."<form action=\"fourth\" method=\"post\">\n";
-            $strBut = $strBut."<input type=\"hidden\" name=\"questionaire\" value=\"".$tn."\"/>\n";
-            $strBut = $strBut."<input type=\"submit\" value=\"".$page."      \"/>\n";
-            $strBut = $strBut."</form>\n";
-            $strBut = $strBut."</div>\n";
-            
-            array_push($listYes, $strBut);        
-            
-        }
-       
-
-        return $listYes;
-    }
-    
-        //10.
-    /**
-     * Zkontroluje kolko a ktore z dotaznikov dany uzivatel este nevyplnil a
-     * vytvori prislusny xhtml text.
-     *
-     * @param li login.
-     * @return list of xhtml texts of buttons.
-     *
-     */
+?>
+            <script type="text/javascript">
+                window.open("table.php"); 
+            </script>
+*/
+//Pom::deleteDbId(1);
 /*
-        private static function createNoButtons(array $li) {
+DBconn::connect();
+$arr = array();
+$tn = "T_Q1";
+$id = "2";
 
-        $listNo = array();
-        
-        foreach ($li as &$value) {
-            $tn = $value;
-            $page = substr($tn, -2, 2);
+$sql1 = "DELETE FROM $tn WHERE user_id = $id";
+$sql2 = "DELETE FROM T_Q2 WHERE user_id = $id";
+//$sql3 = "DELETE FROM T_USER WHERE id = $id";
 
-            //TVORBA ODOSIELACIEHO TLACITKA:
-            $strBut = "";
-            $strBut = $strBut."<div>\n";
-            $strBut = $strBut."<form action=\"".$page.".xhtml\" method=\"post\">\n";
-            $strBut = $strBut."<input type=\"submit\" value=\"".$page." (new)\"/>\n";
-            $strBut = $strBut."</form>\n";
-            $strBut = $strBut."</div>\n";
-            
-            array_push($listNo, $strBut);        
-            
-        }
-        return $listNo;
-    }
+array_push($arr, $sql1);
+array_push($arr, $sql2);
+//array_push($arr, $sql3);
 
-    //11.
-    /**
-     * Vytvori vsetky potrebne tlacitka, tj. vytvori prislusny xhtml text.
-     *
-     * @param $lia
-     * @return list of xhtml texts of buttons.
-     *
-     */
- /*    public static function createAllButtons(array $lia) {
 
-        $listYesButt = Skuska::createYesButtons($lia[0]);
-        $listNoButt = Skuska::createNoButtons($lia[1]);
-        
-        $listAllButt = array();
-        array_push($listAllButt, $listYesButt);
-        array_push($listAllButt, $listNoButt);
-        
-        $str = "";
-
-        for ($i = 0; $i < 2; $i++) {
-            foreach ($listAllButt[$i] as &$butt) {
-                $str = $str.$butt;
+            foreach ($arr as &$item) {
+                mysql_query($item);
             }
-            $str = $str."<br/>";
-            $str = $str."<br/>";
-        }
-       return $str;
-    }
-    
-    //25.
-    /**
-     * Ziska zoznam hlaviciek dotaznikovych tabuliek.
-     *
-     * @return zoznam hlavicie vsetkych dotaznikovych tabuliek.
-     *
-     */
- /*   public static function getQuestHeaders($tn) {
-        $listHead = array();
-        
-        $sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '" 
-                . $tn . "' AND TABLE_SCHEMA = '" . Skuska::$DATABASE."'";
-        
-        mysql_select_db(Skuska::$DATABASE);
-        
-        $result = mysql_query($sql);
-     
-        while ($row = mysql_fetch_row($result)) {
-            foreach ($row as &$item) {
-                array_push($listHead, $item);
-            }
-        }
-/*
-        while(list($column_name)= mysql_fetch_array($result)) {
-            foreach ($column_name as &$item) {
-                echo $item;
-                array_push($listHead, $item);
-            }
-        }
-  */      
-        /*
-        while ($row = mysql_fetch_row($result)) {
-            foreach ($row as &$item) {
-                array_push($listHead, $item);
-            }
-        }*/
-        
-   //     mysql_close();
-   //     return $listHead;
-   // }
 
-public static function getAllUsersId() {
-        
-        DBconn::connect();
-        
-        $listIds = array();
-        $query = "SELECT id from T_USER";
-        
-        //$result = mysql_db_query(DBconn::$DATABASE, $query, DBconn::$connection);
-        $result = mysql_query($query);
-            
-        while (list($id)  = mysql_fetch_array($result)) {
-            array_push($listIds, $id);
-        }
-            
-        mysql_close();
-        return $listIds;
-    } 
+
+
+
+echo "<h1>DONE!</h1>";
+
+$bol = Pom::existsT_USER();
+if($bol){
+    echo "<h1>YES!</h1>";
+}else {
+    echo "<h1>NO!</h1>";
 }
+*/
+
+$pw = "a";
+$pwc = CryptMD5::crypt($pw);
+
+echo "<h1>$pwc</h1>";
+
+
+ 

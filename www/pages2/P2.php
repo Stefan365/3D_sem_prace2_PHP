@@ -10,6 +10,7 @@ include './../pages2/pak/Pom.php';
 */
 
 session_start();
+
 $message = $_SESSION['message'];
 $_SESSION['message'] = "";
     
@@ -46,8 +47,5 @@ $_SESSION['message'] = "";
             </font>
         </h5>
 
-        
     </body>
 </html>
-<?php
-?>

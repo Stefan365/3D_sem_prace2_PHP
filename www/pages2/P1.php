@@ -12,18 +12,18 @@ include './../pages2/pak/Pom.php';
  
 session_start();
 Pom::nastavMessage("message");
-Pom::cleanSesQuest();
 
 $message = $_SESSION['message'];
 $_SESSION['message'] = "";
+
+Pom::cleanSesQuest();
 
 DBconn::initDbSettings();
 
 $initDb = "";
 
         //inicializacia DB
-        if(!DBconn::existsT_USER()){
-            //echo "<h1>KAROLKO</h1>";
+        if(DBconn::existsT_USER() == false){
             $initDb = Pom::initDbText();
         } 
 
@@ -32,7 +32,7 @@ $initDb = "";
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <link rel="stylesheet" type="text/css" href="newcss.css">
-        <title>SEMPRE PHP</title>
+        <title>SEM PROJ</title>
     </head>
 
     <body>

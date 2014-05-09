@@ -14,10 +14,10 @@ session_start();
         
         $uid = $_SESSION['uid'];
         $lg = $_SESSION['login'];
-        $pw = $_SESSION['password'];
+        $pwc = $_SESSION['password'];
         
         //A. Kontrola jestli je uzivatel prihlaseny (keby chcel obist prihlasovaciu stranku)
-        if (!Pom::checkPassword($lg, $pw)){
+        if (!Pom::checkPassword($lg, $pwc)){
             $_SESSION['message'] = "PLEASE LOGIN OR REGISTER!";
             header("Location: P1.php");
             die();
@@ -26,6 +26,7 @@ session_start();
         try {
             //zapis do DB: 
             Pom::zapisDbQuest();
+            $message = "QUESTIONARY SUCCESSFULY SUBMITTED!";
 
         } catch (SQLException $x) {
             echo "Caught exception: ", $ex->getMessage(), "\n";
@@ -44,7 +45,7 @@ session_start();
 
     <body>
 
-        <h3 id=podmenu>"QUESTIONARY SUCCESSFULY SUBMITTED!"</h3>
+        <h3 id=podmenu><?php echo $message;?></h3>
             
         
         <div id=paticka>

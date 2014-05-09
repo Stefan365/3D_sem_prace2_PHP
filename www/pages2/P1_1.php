@@ -1,4 +1,4 @@
-<?php--
+<?php
 /*
     Document   : uzivatelia
     Created on : 20-Apr-2014
@@ -7,23 +7,10 @@
 include './../pages2/pak/DBconn.php';
 include './../pages2/pak/Pom.php';
 
-?>
-
-<html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <link rel="stylesheet" type="text/css" href="newcss.css">
-        <title>SEMPRE PHP</title>
-    </head>
-    <body>
-
-
-        <?php
-            $message = "";
-            $bol = DBconn::initDB();
-                //echo "BOL: *".$bol."*";
-                
+            //$message = "";
             try {
+                $bol = DBconn::initDB();
+                
                 if($bol == true){
                     $message = "DATABASE SUCCESSFULLY INITIALIZED!";
                 } else {
@@ -31,12 +18,19 @@ include './../pages2/pak/Pom.php';
                 }
 
             } catch (SQLException $e) {
-                echo "Caught exception: ", $e->getMessage(), "\n";
+                echo $e->getMessage();
                 $message= "SOMETHING WENT WRONG WITH DB!";
-                //$_SESSION['message'] = "SOMETHING WENT WRONG WITH DB!";
             }
 
         ?>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" href="newcss.css">
+        <title>SEM PROJ</title>
+    </head>
+    <body>
+
         <!-- SPATNE TLACITKO:-->
         <div id=paticka>
             <form action = "P1.php" method = "post">
@@ -45,7 +39,7 @@ include './../pages2/pak/Pom.php';
         </div>
         
         <!-- TEXT O USPECHU:-->
-        <h5 id="podmenu1">
+        <h5 id=menu>
             <?php echo $message; ?>
         </h5>
 

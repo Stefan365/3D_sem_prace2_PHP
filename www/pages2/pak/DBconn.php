@@ -1,7 +1,6 @@
 <?php
 
 include './../pages2/pak/CryptMD5.php';
-//include './../pages2/pak/Pom.php';
 
 /**
  *
@@ -9,7 +8,6 @@ include './../pages2/pak/CryptMD5.php';
  */
 class DBconn {
 
-    //static $JDBC_DRIVER = "com.mysql.jdbc.Driver";
     static $DBHOST = "localhost";
     static $DATABASE = "php_project1";
     static $USER = "root";
@@ -23,10 +21,14 @@ class DBconn {
     }
     
     static function initDbSettings(){
+        DBconn::connect();
+        
         mysql_set_charset('utf8');
         //nastavenie kodovania DB na utf-8:
         $sql = "SET NAMES 'utf8'";
         mysql_query($sql);
+        
+        mysql_close();
     }
     
     //1.0
@@ -136,14 +138,12 @@ class DBconn {
      * @throws java.sql.SQLException
      */
     public static function insertValuesUser($fn, $ln, $lg, $pw, $rol) {
+        
         DBconn::connect();
         
-        //$sql = "INSERT INTO T_USER (first_name, last_name, login, password, role) "
-        //        . "VALUES ('".$fn."','".$ln."','".$lg."','".$pw."','".$rol;
         $sql = "INSERT INTO T_USER (first_name, last_name, login, password, role) "
                 ."VALUES ('$fn','$ln','$lg','$pw','$rol')";
 
-        //mysql_select_db(DBconn::$DATABASE);
         mysql_query($sql);
         mysql_close();
     }
@@ -167,7 +167,6 @@ class DBconn {
             ."password= '$pw'"
             ." WHERE id = $uid";
         
-        //mysql_select_db(DBconn::$DATABASE);
         mysql_query($sql);
         mysql_close();
     }
@@ -193,7 +192,6 @@ class DBconn {
             ."role= '$role'"
             ." WHERE id = $uid";
 
-        //mysql_select_db(DBconn::$DATABASE);
         mysql_query($sql);
         mysql_close();
     }
@@ -242,7 +240,6 @@ class DBconn {
         
         $sql = $part1 . $part2 . $part3;
         
-        //mysql_select_db(DBconn::$DATABASE);
         mysql_query($sql);
         mysql_close();
         
@@ -262,7 +259,6 @@ class DBconn {
         $sql = "INSERT INTO T_QUERY (q_tableName) "
             ." VALUES ('$tn')";
         
-        //mysql_select_db(DBconn::$DATABASE);
         mysql_query($sql);
         mysql_close();
         
@@ -283,7 +279,6 @@ class DBconn {
         DBconn::connect();
         
         $sql = "DROP TABLE ".$tn;
-        //mysql_select_db(DBconn::$DATABASE);
         mysql_query($sql);
         mysql_close();
         
@@ -329,7 +324,6 @@ class DBconn {
         $sql = "SELECT first_name FROM T_USER WHERE id = $uid";
         $vysledok = mysql_query($sql);
         
-        //$first_name = mysql_fetch_array($vysledok);
         list($first_name)= mysql_fetch_array($vysledok);
         mysql_close();
         return $first_name;
@@ -375,8 +369,6 @@ class DBconn {
 
         $vysledok = mysql_query($sql);
 
-        //$login = mysql_fetch_array($vysledok);
-        
         list($login)= mysql_fetch_array($vysledok);        
         
         mysql_close();
@@ -397,8 +389,6 @@ class DBconn {
         $sql = "SELECT password FROM T_USER WHERE id = $uid";
         $vysledok = mysql_query($sql);
 
-        //$password = mysql_fetch_array($vysledok);
-        
         list($password)= mysql_fetch_array($vysledok);       
         
         mysql_close();  
@@ -420,8 +410,6 @@ class DBconn {
 
         $vysledok = mysql_query($sql);
 
-        //$role = mysql_fetch_array($vysledok);
-        
         list($role)= mysql_fetch_array($vysledok);
         
         
@@ -432,24 +420,30 @@ class DBconn {
     //4.
     /**
      * Zjistuje jestli existuje DB tabulka T_USER, 
+     * na zaklade ceho usoudi, jestli ma spustit inicializaci DB.
      *
      * @return ano/ne pro existenci T_USER v databazi.
      */
     public static function existsT_USER() {
+
         DBconn::connect();
-        //echo "<h1>Caught exception: 0</h1>";
         
         try {
-            $sql = "SELECT * FROM T_USER";
-            mysql_query($sql);
-            mysql_close();
-            //echo "<h1>Caught exception: </h1>";
-        
-            return true;
             
-        } catch (SQLException $ex) {
-            echo "Caught exception: ", $ex->getMessage(), "\n";
-            mysql_close();
+            $sql = "SELECT COUNT(*) FROM information_schema.tables WHERE " 
+                ."table_schema = '".DBconn::$DATABASE."'". 
+                " AND table_name = 'T_USER'";
+            $result = mysql_query($sql);
+            $row  = mysql_fetch_row($result);            
+            
+            if ($row[0] == 1){
+                return true;
+            } else {
+                return false;
+            }
+            
+        } catch (SQLException $e) {
+            echo "Caught exception: ", $e->getMessage(), "\n";
             return false;
         } 
     }
@@ -461,7 +455,8 @@ class DBconn {
      * 
      */
     public static function initDB() {
-        if (!DBconn::existsT_USER()){
+        if (DBconn::existsT_USER() == false){
+            DBconn::initDbSettings();
             DBconn::createTableUser();
             DBconn::createTableQ1();
             DBconn::createTableQ2();
@@ -470,6 +465,7 @@ class DBconn {
             DBconn::insertValuesT_QUERY("T_Q2");
             DBconn::insertValuesUser("Stefan", "Veres", "admin", CryptMD5::crypt("admin"), "A");            
             return true;
+            
         } else {
             return false;
         }

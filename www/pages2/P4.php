@@ -9,7 +9,10 @@ session_start();
  *
  * @author Stefan Veres
  * 
+ * Hlavna uzivatelska stranka
+ * 
  */
+
 ?>
 <html>
     <head>
@@ -17,7 +20,8 @@ session_start();
         <?php
 
         //pro zobrazzeni dotazniku:
-        $tableDepict =  filter_input(INPUT_POST, 'questionaire');
+        $tD =  filter_input(INPUT_POST, 'questionaire');
+        $_SESSION['questionaire'] = $tD;
         
         //sprava o neuspechu:
         $message = $_SESSION['message'];
@@ -25,11 +29,11 @@ session_start();
 
         $uid = $_SESSION['uid'];
         $lg = $_SESSION['login'];
-        $pw = $_SESSION['password'];
+        $pwc = $_SESSION['password'];
         $goAdmin = "";
         
         //A. Kontrola jestli je uzivatel prihlaseny (keby chcel obist prihlasovaciu stranku)
-        if (!Pom::checkPassword($lg, $pw)){
+        if (!Pom::checkPassword($lg, $pwc)){
             $_SESSION['message'] = "TRY IT AGAIN PLEASE, INCORRECT LOGIN OR PASSWORD!";
             header("Location: P1.php");
             die();
@@ -40,16 +44,11 @@ session_start();
         }
         
         //B. Kontrola jestli bol vybrany dotaznik na zobrazenie: 
-        if (!($tableDepict == null || $tableDepict =="")){
-            ?>
-            <script type="text/javascript">
-                window.open("table.php"); 
-            </script>
-            <?php
-            //toto zdanlivo zbytocne presmerovanie je kvoli zabraneniu 
-            //vykakovaniu posledne zvoleneho dotaznika pri stlaceni F5.
-            header("Location: P4.php");
-            die(); 
+        //if ($tD == null or $tD == ""){
+        if ($tD != null AND $tD != ""){
+            //zobrazenie vyplneneho dotazniku:
+            header("Location: table.php");
+            die();
         }
 
         //Kontrola jestli dany dotaznik jiz byl vyplnen. pokud jo, otevra se jenom 
@@ -77,7 +76,7 @@ session_start();
         </div>
         
         <!-- change user data button: -->
-        <div id=patickaR>
+        <div id=paticka>
             <form action="P5.php" method="post">
                 <input type="submit" value="USER DATA"/>
             </form>
@@ -87,16 +86,6 @@ session_start();
         <!-- admin button: -->
         <?php echo $goAdmin; ?>
         
-        
-        <div id=paticka>
-            <form action="P1.php" method="post">
-                <input type="submit" value="BACK" />
-            </form>
-
-        </div>
-        
-        <!--admin button:-->
-        <?php echo $goAdmin; ?>
         
         <!-- message: -->
         <h5 id=podmenu1> <font color="red">

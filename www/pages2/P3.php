@@ -4,12 +4,14 @@ include './../pages2/pak/DBconn.php';
 include './../pages2/pak/Pom.php';
 
 /*
+ * Prihlasovanie sa do systemu
+
    Document   : php projekt
    Created on : 20.04.2014
    Author     : Stefan Veres
 */
 
-//Prihlasovanie sa do systemu:
+
 session_start();
 
 $message = $_SESSION['message'];

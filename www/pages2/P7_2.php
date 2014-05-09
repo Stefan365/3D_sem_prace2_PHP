@@ -30,7 +30,6 @@ session_start();
         try {
             //vymazanie daneho id zo vsetkych DB tabuliek
             Pom::deleteDbId($sel_uid);
-            //pokud byl vymaz uspesny, upravime tiez session:
             $_SESSION['sel_user'] = "";
         } catch (SQLException $ex) {
             echo "Caught exception: ", $ex->getMessage(), "\n";
@@ -50,8 +49,6 @@ session_start();
     </head>
 
     <body>
-        <h3> ADMIN USER UPDATE: </h3>
-        
         
         <h3 id=podmenu> USER <?php echo $comboName; ?> SUCCESSFULY REMOVED FROM ALL DB TABLES!  </h3>
         

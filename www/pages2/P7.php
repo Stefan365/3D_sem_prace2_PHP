@@ -39,7 +39,6 @@ session_start();
             $pw = DBconn::getUserPw($sel_uid);
             $role = DBconn::getUserRole($sel_uid);
         
-            
         } catch (SQLException $x) {
             echo "Caught exception: ", $ex->getMessage(), "\n";
             $_SESSION['message'] = "TRY IT AGAIN PLEASE, SOME SQL ERROR!";

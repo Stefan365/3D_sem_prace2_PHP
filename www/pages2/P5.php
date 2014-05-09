@@ -15,12 +15,12 @@ $_SESSION['message'] = "";
 
         $uid = $_SESSION['uid'];
         $lg = $_SESSION['login'];
-        $pw = $_SESSION['password'];
+        $pwc = $_SESSION['password'];
         $fn = $_SESSION['first_name'];
         $ln = $_SESSION['last_name'];
             
         //A. Kontrola jestli je uzivatel prihlaseny (keby chcel obist prihlasovaciu stranku)
-        if (!Pom::checkPassword($lg, $pw)){
+        if (!Pom::checkPassword($lg, $pwc)){
             $_SESSION['message'] = "PLEASE LOGIN OR REGISTER!";
             //dispatch
             header("Location: P1.php");
@@ -43,7 +43,7 @@ $_SESSION['message'] = "";
             FIRST NAME  : <input type="text" value="<?php echo $fn; ?>" name="first_name" /> <br/>
             LAST NAME   : <input type="text" value="<?php echo $ln; ?>" name="last_name" /> <br/>
             NEW PASSWORD: <input type="password" name="password" /> <br/>
-                          <input type="hidden" value="P5" name="page" /> <br/>
+            
             <input type="submit" value="SAVE" />
         </form>
         

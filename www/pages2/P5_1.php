@@ -12,11 +12,11 @@ session_start();
  */
 
         $lg = $_SESSION['login'];
-        $pw = $_SESSION['password'];
+        $pwc = $_SESSION['password'];
         $uid = $_SESSION['uid'];
             
         //A. Kontrola jestli je uzivatel prihlaseny (keby chcel obist prihlasovaciu stranku)
-        if (!Pom::checkPassword($lg, $pw)){
+        if (!Pom::checkPassword($lg, $pwc)){
             $_SESSION['message'] = "LOGIN INCORRECT, PLEASE LOGIN AGAIN!";
             header("Location: P1.php");
             die();
@@ -27,6 +27,8 @@ session_start();
             Pom::updateDbUserApp($uid);
             //pokud byl zapis uspesny, zapiseme ich i do session, aby boli po ruke:
             Pom::zapisSesFnLnPw();
+            $message = "DATA UPDATE WAS SUCCESSFUL!";
+            
             
         } catch (SQLException $x) {
             echo "Caught exception: ", $ex->getMessage(), "\n";
@@ -50,7 +52,7 @@ session_start();
         <h3> <?php echo $fn; ?></h3>
         
         
-        <h3 id=podmenu> REGISTRATION WAS SUCCESSFUL!</h3>
+        <h3 id=podmenu> <?php echo $message; ?> </h3>
         
         <div id=paticka>
             <form action="P4.php" method="post">

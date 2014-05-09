@@ -18,7 +18,6 @@ session_start();
         
         //vynulovanie pripadne obsahu sel_user:
         $_SESSION['sel_user'] = "";
-        
         $uid = $_SESSION['uid'];
 
         //A.Vylouceni neautorizovaneho pristupu:
@@ -31,7 +30,6 @@ session_start();
         }
         
         $lg = $_SESSION['login'];
-        $goUser = Pom::goUserText();
 
         try {
             $combo = Pom::createComboFinal();
@@ -73,9 +71,6 @@ session_start();
             </form>
         </div>
         
-        <!-- go user tlacitko -->
-        <?php echo $goUser; ?>
-
         
         <h5 id=podmenu1> <font color="red">
             <?php echo $message; ?> 

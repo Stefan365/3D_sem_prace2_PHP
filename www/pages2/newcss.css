@@ -55,13 +55,22 @@ bottom:60px;
 left: 10px; 
 }
 
+#nadpaticka {
+position: absolute;
+width:900px;
+height:89px;
+overflow: hidden;
+bottom:100px;
+left: 10px; 
+}
+
 #patickaR {
 position: absolute;
 width:900px;
 height:89px;
 overflow: hidden;
 bottom:60px;
-left: 360px;
+left: 330px;
 }            
 
 

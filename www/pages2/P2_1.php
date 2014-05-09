@@ -11,6 +11,17 @@ include './../pages2/pak/Pom.php';
 
 session_start();
 
+try {
+    Pom::zapisDbUser(); 
+    $message= "REGISTRATION WAS SUCCESSFUL!";
+                
+} catch (SQLException $e) {
+    echo "Caught exception: ", $e->getMessage(), "\n";
+    $message= "SOMETHING WENT WRONG WITH DB!";          
+}
+
+$fn = filter_input(INPUT_POST, 'first_name');
+
 ?>
 <html>
     <head>
@@ -21,14 +32,9 @@ session_start();
 
     <body>
 
-        <h3>Spracovanie registracie</h3>
-        <?php Pom::zapisDbUser(); 
-          $fn = filter_input(INPUT_POST, 'first_name'); ?>
-        
         <h3> <?php echo $fn; ?></h3>
         
-        
-        <h3 id=podmenu> REGISTRATION WAS SUCCESSFUL!</h3>
+        <h3 id=podmenu> <?php echo $message; ?></h3>
         
         <div id=paticka>
             <form action="P1.php" method="post">
@@ -38,6 +44,3 @@ session_start();
         
     </body>
 </html>
-<?php
- 
-?>

@@ -1,4 +1,4 @@
-<?php 
+ <?php 
 
 //include './../pages2/pak/DBconn.php';
 //include './../pages2/pak/CryptMD5.php';
@@ -15,9 +15,7 @@ class Pom {
     /**
      * Zapise atributy do DB.
      *
-     * @param request pozadavek od klienta.
-     * @throws java.sql.SQLException
-     *
+     * @throws SQLException
      */
     static function zapisDbUser() {
 
@@ -39,8 +37,7 @@ class Pom {
      * Zapise atributy do DB.
      *
      * @param uid
-     * @param request pozadavek od klienta.
-     * @throws java.sql.SQLException
+     * @throws SQLException
      *
      */
     public static function updateDbUserApp($uid) {
@@ -53,17 +50,17 @@ class Pom {
         //pokud je policko prazdne, tak neudelej nic, jinak hesla vymen:
         if ($pw == ""){
             $pwOld = DBconn::getUserPw($uid);
-            $pw = $pwOld;
+            $pwc = $pwOld;
         } else {
             //sifrovanie hesla:
-            $pw = CryptMD5::crypt($pw);
+            $pwc = CryptMD5::crypt($pw);
         }
 
         //zapis hodnoty do DB:
         if ($role == null || $role == "" ){
-            DBconn::updateValuesUser($uid, $fn, $ln, $pw);
+            DBconn::updateValuesUserA($uid, $fn, $ln, $pwc);
         } else {
-            DBconn::updateValuesUserA($uid, $fn, $ln, $pw, $role);
+            DBconn::updateValuesUser($uid, $fn, $ln, $pwc, $role);
         }
     }
     
@@ -71,9 +68,7 @@ class Pom {
     /**
      * Zapise atributy do Session (po kontrole hesla).
      *
-     * @param session klientuv session.
-     * @param request pozadavek od klienta.
-     * @throws java.sql.SQLException
+     * @throws SQLException
      *
      */
     public static function zapisSesUser() {
@@ -90,12 +85,6 @@ class Pom {
         $fn = DBconn::getUserFn($uid);
         $ln = DBconn::getUserLn($uid);
         
-        //echo "<h1> UID:*".$uid."*</h1>";
-        //echo "<h1> FN:*".$fn."*</h1>";
-        //echo "<h1> LN:*".$ln."*</h1>";
-        
-        //$rol = DBconn::getUserRole($uid);
-
         $_SESSION['uid'] = $uid;
         $_SESSION['login'] = $lg;
         $_SESSION['first_name'] = $fn;
@@ -109,8 +98,7 @@ class Pom {
     /**
      * Zapise tie atributy do session, ale len tie, ktore sa menia.
      *
-     * @param session klientuv session.
-     * @throws java.sql.SQLException
+     * @throws SQLException
      *
      */
     public static function zapisSesFnLnPw() {
@@ -120,22 +108,20 @@ class Pom {
          $uid = $_SESSION['uid'];
          $fn = DBconn::getUserFn($uid);
          $ln = DBconn::getUserLn($uid);
-         $pw = DBconn::getUserPw($uid);
+         $pwc = DBconn::getUserPw($uid);
          
         //Zapis do session, aby to bolo stale poruke:
         $_SESSION['first_name'] = $fn;
         $_SESSION['last_name'] = $ln;
         // zapis pw sa len zdanlivo bije vid metoda vyssie, tato metoda ma sirsie 
         // pouzite, preto sa tieto 2 zapisy nebiju.
-        $_SESSION['password'] = $pw;
+        $_SESSION['password'] = $pwc;
         
     }
 
     //2.2
     /**
      * Vynuluje hodnoty session zodpovedajuce userovi.
-     *
-     * @param session klientuv session.
      *
      */
     public static function cleanSesQuest() {
@@ -152,12 +138,12 @@ class Pom {
     /**
      * inicializuje messsage.
      *
-     * @param attr atribut session
+     * @param attr atribute of session
      *
      */
     public static function nastavMessage($attr) {
 
-        $_SESSION[$attr] = "";
+        
         try {
             $s = $_SESSION[$attr];
             
@@ -171,7 +157,7 @@ class Pom {
     //4.
     /**
      * Zapise hodnoty z dotazniku do DB.
-     *
+     * 
      */
     public static function zapisDbQuest() {
 
@@ -183,16 +169,6 @@ class Pom {
         $q1 = filter_input(INPUT_POST, 'q1');
         $q2 = filter_input(INPUT_POST, 'q2');
         $q3 = filter_input(INPUT_POST, 'q3');
-        /*
-        echo "<h1> UID:*".$uid."*</h1>";
-        echo "<h1> UID:*".$gen."*</h1>";
-        echo "<h1> UID:*".$ag."*</h1>";
-        echo "<h1> UID:*".$ed."*</h1>";
-        echo "<h1> UID:*".$ig."*</h1>";
-        echo "<h1> UID:*".$q1."*</h1>";
-        echo "<h1> UID:*".$q2."*</h1>";
-        echo "<h1> UID:*".$q3."*</h1>";
-        */ 
         
         $q_tab = filter_input(INPUT_POST, 'questionaire');
 
@@ -224,12 +200,10 @@ class Pom {
      * Zkontroluje kolko a ktore z dotaznikov dany uzivatel uz vyplnil.
      *
      * @param uid user id.
-     * @return
+     * @return list of questionaires DB table names.
      */
     public static function checkDbUserQueries($uid) {
 
-        //array   <List<String>> listAll = new ArrayList<>();
-        //List<String> listYes = new ArrayList<>(), listNo = new ArrayList<>();
         DBconn::connect();
         
         $query1 = "SELECT q_tableName from T_QUERY";
@@ -240,17 +214,12 @@ class Pom {
         $listNo = array();
         $listAll = array();
 
-        /*
-        foreach ($pole as &$value) {
-            echo "*".$value."*<br/>";
-        }*/
-
         try {
             
             $result1 = mysql_query($query1);
             
-            list($q_tableName) = mysql_fetch_array($result1);
-            $tn = $q_tableName;
+            while(list($q_tableName) = mysql_fetch_array($result1)){
+                $tn = $q_tableName;
             
                 //prohledavani dotaznikovych tabulek: 
                 $query2 = $preQuery.$tn.$postQuery;
@@ -259,7 +228,7 @@ class Pom {
                 list($user_id) = mysql_fetch_array($result2);
                 
                 
-                if (($user_id != null) && !$user_id != "") {
+                if (($user_id != null) && $user_id != "") {
                     array_push($listYes, $tn);
                     $user_id = "";
                 } else {
@@ -272,7 +241,7 @@ class Pom {
 
             mysql_close();
             return $listAll;
-
+            
         } catch (SQLException $e) {
             echo "Caught exception: ", $e->getMessage(), "\n";
             return null;
@@ -296,23 +265,24 @@ class Pom {
             $tn = $value;
             $page = substr($tn, -2, 2);
        
+            //echo "<h1>tbke: *". $tn . "*</h1>";
+            
             $strBut = "";
-            $strBut = $strBut."<div>\n";
-            $strBut = $strBut."<form action=\"P4.php\" method=\"post\">\n";
-            $strBut = $strBut."<input type=\"hidden\" name=\"questionaire\" value=\"".$tn."\"/>\n";
-            $strBut = $strBut."<input type=\"submit\" value=\"".$page."      \"/>\n";
-            $strBut = $strBut."</form>\n";
-            $strBut = $strBut."</div>\n";
+            $strBut = $strBut."<div>";
+            $strBut = $strBut."<form action=\"P4.php\" method=\"post\">";
+            $strBut = $strBut."<input type=\"hidden\" name=\"questionaire\" value=\"".$tn."\"/>";
+            $strBut = $strBut."<input type=\"submit\" value=\"".$page."     \"/>";
+            $strBut = $strBut."</form>";
+            $strBut = $strBut."</div>";
             
             array_push($listYes, $strBut);        
             
         }
        
-
         return $listYes;
     }
     
-        //10.
+    //10.
     /**
      * Zkontroluje kolko a ktore z dotaznikov dany uzivatel este nevyplnil a
      * vytvori prislusny xhtml text.
@@ -331,11 +301,11 @@ class Pom {
 
             //TVORBA ODOSIELACIEHO TLACITKA:
             $strBut = "";
-            $strBut = $strBut."<div>\n";
-            $strBut = $strBut."<form action=\"".$page.".xhtml\" method=\"post\">\n";
-            $strBut = $strBut."<input type=\"submit\" value=\"".$page." (new)\"/>\n";
-            $strBut = $strBut."</form>\n";
-            $strBut = $strBut."</div>\n";
+            $strBut = $strBut."<div>";
+            $strBut = $strBut."<form action=\"".$page.".xhtml\" method=\"post\">";
+            $strBut = $strBut."<input type=\"submit\" value=\"".$page." (new)\"/>";
+            $strBut = $strBut."</form>";
+            $strBut = $strBut."</div>";
             
             array_push($listNo, $strBut);        
             
@@ -347,7 +317,7 @@ class Pom {
     /**
      * Vytvori vsetky potrebne tlacitka, tj. vytvori prislusny xhtml text.
      *
-     * @param $lia
+     * @param $lia list of list Yes and No buttons.
      * @return list of xhtml texts of buttons.
      *
      */
@@ -366,7 +336,6 @@ class Pom {
             foreach ($listAllButt[$i] as &$butt) {
                 $str = $str.$butt;
             }
-            $str = $str."<br/>";
             $str = $str."<br/>";
         }
        return $str;
@@ -390,11 +359,9 @@ class Pom {
         $query = "SELECT role from T_USER where id =" . $uid;
 
         try {
-            //$result = mysql_db_query(DBconn::$DATABASE, $query, DBconn::$connection);
             $result = mysql_query($query);
-            $role = mysql_fetch_row($result);
+            list($role) = mysql_fetch_row($result);
             
-            //while (list($role) = mysql_fetch_array($result)) {
             mysql_close();
             return ($role == "A");
             
@@ -411,10 +378,10 @@ class Pom {
      *
      * @param lg login.
      * @param pw password.
-     * @return 
+     * @return true/false
      *
      */
-    public static function checkPassword($lg, $pw) {
+    public static function checkPassword($lg, $pwc) {
         
         DBconn::connect();
         
@@ -428,7 +395,7 @@ class Pom {
             $realPw = $password;
             
             mysql_close();
-            return ($realPw == null ? false : ($realPw == $pw));
+            return ($realPw == null ? false : ($realPw == $pwc));
 
         } catch (SQLException $e) {
             echo "Caught exception: ", $e->getMessage(), "\n";
@@ -454,7 +421,7 @@ class Pom {
         $query = "SELECT id, first_name, last_name from T_USER where role NOT LIKE 'A'";
         
         try {
-            //$result = mysql_db_query(DBconn::$DATABASE, $query, DBconn::$connection);
+            
             $result = mysql_query($query);
             
             while (list($id, $first_name, $last_name) = mysql_fetch_array($result)) {
@@ -502,7 +469,7 @@ class Pom {
      * Vytvori vsetky potrebne tlacitka, tj. vytvori prislusny xhtml text.
      *
      * @return string of xhtml texts of for creating combobox.
-     * @throws java.sql.SQLException
+     * @throws SQLException
      *
      */
     public static function createComboFinal() {
@@ -539,44 +506,34 @@ class Pom {
      * Vymaze z Databazy vsetky zaznamy usera s dany id.
      * 
      * @param uid user id
-     * @throws java.sql.SQLException
+     * @throws SQLException
      */
     public static function deleteDbId($uid) {
         
-        DBconn::connect();
         
         $queryTables = Pom::getQueryTableNames();
+        
+        DBconn::connect();
+                
         $queries = array();
         
         foreach ($queryTables as &$tab) {
-            $sqlq = "DELETE FROM " . $tab . " WHERE user_id = " . $uid;
+            $sqlq = "DELETE FROM $tab WHERE user_id = $uid";
             array_push($queries, $sqlq);
         }
-        $sqlu = "DELETE FROM T_USER WHERE id = " . $uid;
+        $sqlu = "DELETE FROM T_USER WHERE id = $uid";
+        array_push($queries, $sqlu);
+        
         
         //deleting in queries tables:
         foreach ($queries as &$sql) {
             try {
-                //mysql_db_query(DBconn::$DATABASE, $sql, DBconn::$connection);
                 mysql_query($sql);
-            
             } catch (SQLException $e) {
                 echo "Caught exception: ", $e->getMessage(), "\n";
             } 
         }
-        
-        
-        //deleting in T_USER table:
-        try {
-            //mysql_db_query(DBconn::$DATABASE, $sqlu, DBconn::$connection);
-            mysql_query($sqlu);
-            
-        } catch (SQLException $e) {
-            echo "Caught exception: ", $e->getMessage(), "\n";
-        } 
-        
         mysql_close();
-
     }
 
     //19.
@@ -584,7 +541,7 @@ class Pom {
      * Vrati zoznam mien DB tabuliek dotaznikov
      *
      * @return zoznam databazovych tabuliek, ktore zodpovedaju dotaznikom.
-     * @throws java.sql.SQLException
+     * @throws SQLException
      */
     private static function getQueryTableNames() {
         
@@ -594,7 +551,7 @@ class Pom {
         $query = "SELECT q_tableName FROM T_QUERY";
         
         try {
-            //$result = mysql_db_query(DBconn::$DATABASE, $query, DBconn::$connection);
+            
             $result = mysql_query($query);
             
             while (list($q_tableName)  = mysql_fetch_array($result)) {
@@ -620,11 +577,11 @@ class Pom {
     public static function goAdminText() {
     
         //change usder data button:
-        $str = "<div id=\"patickaR\">\n"
-        . "<form action=\"P6.php\" method=\"post\">\n"
-        . "<input type=\"submit\" value=\"GO ADMIN\"/>\n"
-        . "</form>\n"
-        . "</div>\n"
+        $str = "<div id=\"patickaR\">"
+        . "<form action=\"P6.php\" method=\"post\">"
+        . "<input type=\"submit\" value=\"GO ADMIN\"/>"
+        . "</form>"
+        . "</div>"
         . "<br/>";
         
         return $str;
@@ -638,11 +595,11 @@ class Pom {
      */
     public static function initDbText() {
     
-        $str = "<div id=\"patickaR\">\n"
-        . "<form action=\"P1_1.php\" method=\"post\">\n"
-        . "<input type=\"submit\" value=\"INIT DB\"/>\n"
-        . "</form>\n"
-        . "</div>\n"
+        $str = "<div id=\"patickaR\">"
+        . "<form action=\"P1_1.php\" method=\"post\">"
+        . "<input type=\"submit\" value=\"INIT DB\"/>"
+        . "</form>"
+        . "</div>"
         . "<br/>";
         
         return $str;
@@ -658,39 +615,16 @@ class Pom {
     public static function goUserText() {
     
         //change usder data button:
-        $str = "<div id=\"patickaR\">\n"
-        . "<form action=\"P4.php\" method=\"post\">\n"
-        . "<input type=\"submit\" value=\"GO USER\"/>\n"
-        . "</form>\n"
-        . "</div>\n"
+        $str = "<div id=\"patickaR\">"
+        . "<form action=\"P4.php\" method=\"post\">"
+        . "<input type=\"submit\" value=\"GO USER\"/>"
+        . "</form>"
+        . "</div>"
         . "<br/>";
         
         return $str;
     }
 
-    //23.
-    /**
-     * Zjistuje jestli existuje DB tabulka T_USER, 
-     * na zaklade ceho usoudi, jestli ma spustit inicializaci DB.
-     *
-     * @return ano/ne pro existenci T_USER v databazi.
-     */
-    public static function existsT_USER() {
-        DBconn::connect();
-        
-        try {
-            $sql = "SELECT * FROM T_USER";
-            //mysql_db_query(DBconn::$DATABASE, $sql, DBconn::$connection);
-            mysql_query($sql);
-            
-            mysql_close();
-            return true;
-        } catch (SQLException $e) {
-            echo "Caught exception: ", $e->getMessage(), "\n";
-            mysql_close();
-            return false;
-        } 
-    }
     
     //24.
     /**
@@ -707,7 +641,6 @@ class Pom {
         $listIds = array();
         $query = "SELECT id from T_USER";
         
-        //$result = mysql_db_query(DBconn::$DATABASE, $query, DBconn::$connection);
         $result = mysql_query($query);
             
         while (list($id)  = mysql_fetch_array($result)) {
@@ -732,7 +665,7 @@ class Pom {
         $sql = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '" 
                 . $tn . "' AND TABLE_SCHEMA = '" . DBconn::$DATABASE."'";
         
-        mysql_select_db(DBconn::$DATABASE);
+        //mysql_select_db(DBconn::$DATABASE);
         
         $result = mysql_query($sql);
 
@@ -755,7 +688,7 @@ class Pom {
      * @param uid ID usera.
      *
      */
-    private static function getQuestions($tn) {
+    public static function getQuestions($tn) {
         
         $listQuest = array();
         
@@ -788,9 +721,6 @@ class Pom {
             break;
         }
         
-        return $listQuest;
-        
+        return $listQuest;   
     }
-
-
 }
