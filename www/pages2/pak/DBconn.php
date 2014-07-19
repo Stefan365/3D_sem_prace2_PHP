@@ -7,7 +7,7 @@ include './../pages2/pak/CryptMD5.php';
  * @author Stefan Veres
  */
 class DBconn {
-
+        
     static $DBHOST = "localhost";
     static $DATABASE = "php_project1";
     static $USER = "root";
